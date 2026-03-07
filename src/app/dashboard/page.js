@@ -16,6 +16,9 @@ import {
   ExternalLink,
   Trash2,
   Edit3,
+  Trophy,
+  Copy,
+  Check,
 } from "lucide-react";
 
 function AddProjectModal({ userId, onClose, onAdded }) {
@@ -181,6 +184,7 @@ export default function DashboardPage() {
   const TABS = [
     { id: "overview", label: "Overview", icon: User },
     { id: "projects", label: "Projects", icon: Layers },
+    { id: "hackathons", label: "Hackathons", icon: Trophy },
     { id: "settings", label: "Settings", icon: Settings },
   ];
 
@@ -444,6 +448,9 @@ export default function DashboardPage() {
             </div>
           )}
 
+          {/* HACKATHONS TAB */}
+          {tab === "hackathons" && <HackathonsTab user={user} />}
+
           {/* SETTINGS TAB */}
           {tab === "settings" && (
             <SettingsTab
@@ -456,6 +463,97 @@ export default function DashboardPage() {
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+function HackathonsTab({ user }) {
+  const [teams, setTeams] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState(null);
+
+  useEffect(() => {
+    // Fetch all teams where this user is a member
+    fetch(`/api/users/${user._id}/teams`)
+      .then(r => r.json())
+      .then(d => { setTeams(d.teams || []); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, [user._id]);
+
+  const copyCode = (code, id) => {
+    navigator.clipboard.writeText(code);
+    setCopied(id);
+    setTimeout(() => setCopied(null), 2000);
+  };
+
+  if (loading) return (
+    <div className="flex justify-center py-16">
+      <div className="w-6 h-6 border-2 border-violet-500/30 border-t-violet-500 rounded-full animate-spin" />
+    </div>
+  );
+
+  return (
+    <div className="space-y-5">
+      <div className="flex items-center justify-between">
+        <p className="text-white/50 text-sm">{teams.length} team{teams.length !== 1 ? 's' : ''} joined</p>
+        <Link href="/hackathons" className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 text-white text-sm font-medium hover:opacity-90 transition-all">
+          <Trophy size={14} /> Browse Hackathons
+        </Link>
+      </div>
+
+      {teams.length === 0 ? (
+        <div className="glass rounded-2xl p-16 text-center border border-white/5">
+          <Trophy size={32} className="text-white/20 mx-auto mb-4" />
+          <p className="text-white/40 mb-2">You haven't joined any hackathon teams yet.</p>
+          <Link href="/hackathons" className="text-violet-400 hover:text-violet-300 text-sm transition-colors">
+            Find a hackathon →
+          </Link>
+        </div>
+      ) : (
+        <div className="grid md:grid-cols-2 gap-4">
+          {teams.map(t => (
+            <div key={t._id} className="glass rounded-2xl p-5 border border-white/5 hover:border-violet-500/20 transition-all">
+              <div className="flex items-start justify-between mb-2">
+                <div>
+                  <h3 className="text-white font-semibold">{t.name}</h3>
+                  <Link href={`/hackathons/${t.hackathon?._id}`} className="text-violet-400 text-xs hover:text-violet-300 transition-colors">
+                    {t.hackathon?.title || 'Hackathon'}
+                  </Link>
+                </div>
+                <span className={`text-xs px-2 py-1 rounded-full border ${
+                  t.status === 'submitted' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20'
+                  : t.status === 'forming' ? 'bg-blue-500/15 text-blue-400 border-blue-500/20'
+                  : 'bg-white/10 text-white/40 border-white/10'
+                }`}>{t.status}</span>
+              </div>
+
+              {t.projectIdea && <p className="text-white/40 text-sm mb-3 line-clamp-2">{t.projectIdea}</p>}
+
+              <div className="flex items-center gap-1.5 mb-3">
+                {t.members?.slice(0, 6).map((m, i) => (
+                  <div key={i} title={m.user?.name}
+                    className="w-7 h-7 rounded-full bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center text-xs font-bold text-white">
+                    {m.user?.name?.slice(0, 1) || '?'}
+                  </div>
+                ))}
+                <span className="text-white/30 text-xs ml-1">{t.members?.length} member{t.members?.length !== 1 ? 's' : ''}</span>
+              </div>
+
+              {/* Invite code — only show to leader */}
+              {t.leader?._id === user._id && t.inviteCode && (
+                <div className="flex items-center gap-2 mt-3 p-2.5 rounded-lg bg-white/3 border border-white/5">
+                  <span className="text-white/40 text-xs">Invite Code:</span>
+                  <span className="font-mono text-violet-400 text-sm tracking-widest">{t.inviteCode}</span>
+                  <button onClick={() => copyCode(t.inviteCode, t._id)}
+                    className="ml-auto text-white/30 hover:text-white transition-colors">
+                    {copied === t._id ? <Check size={13} className="text-emerald-400" /> : <Copy size={13} />}
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
