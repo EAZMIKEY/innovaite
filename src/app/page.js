@@ -1,14 +1,11 @@
 'use client';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
 import {
   Code2, Zap, Globe, Users, Star, ArrowRight,
-  Github, Terminal, Layers, Trophy, ChevronRight
+  Terminal, Layers, Trophy, ChevronRight
 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-
-const ROLES = ['Developer', 'Designer', 'Builder', 'Hacker', 'Creator'];
 
 const FEATURES = [
   { icon: Layers, title: 'Portfolio Builder', desc: 'Create a stunning portfolio that highlights your projects, skills, and journey.', color: 'from-violet-500 to-purple-500' },
@@ -33,13 +30,6 @@ const SAMPLE_PROFILES = [
 ];
 
 export default function LandingPage() {
-  const [roleIdx, setRoleIdx] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => setRoleIdx((p) => (p + 1) % ROLES.length), 2200);
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-white overflow-x-hidden">
       <Navbar />
@@ -52,25 +42,24 @@ export default function LandingPage() {
         <div className="relative max-w-5xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass border border-violet-500/30 text-sm text-violet-300 mb-8">
             <Zap size={14} className="text-violet-400" />
-            The Devfolio Alternative — Open & Beautiful
+            Powering industries with creator brilliance.
           </div>
 
           <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-tight mb-6">
-            Your Portfolio,{' '}<br />
-            <span className="gradient-text">Built for {ROLES[roleIdx]}s</span>
+            Your Innovation Hub,{' '}<br />
+            <span className="gradient-text">Built for Problem Solvers</span>
           </h1>
 
           <p className="text-white/60 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-10">
-            Innovaite is the platform where developers showcase their best work, connect with opportunities,
-            and build in public. Your career starts with a great portfolio.
+            Nexora connects companies with engineers, creators, and freelancers to solve real-world challenges, join hackathons, and build AI-verified portfolios.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/register" className="px-8 py-3.5 rounded-xl bg-linear-to-r from-violet-600 to-blue-600 text-white font-semibold text-base hover:opacity-90 transition-all hover:shadow-2xl hover:shadow-violet-500/30 flex items-center gap-2 justify-center">
-              Create Free Profile <ArrowRight size={18} />
+            <Link href="/challenges" className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 text-white font-semibold text-base hover:opacity-90 transition-all hover:shadow-2xl hover:shadow-violet-500/30 flex items-center gap-2 justify-center">
+              Explore Challenges <ArrowRight size={18} />
             </Link>
-            <Link href="/explore" className="px-8 py-3.5 rounded-xl glass border border-white/10 text-white/80 font-semibold text-base hover:border-violet-500/40 hover:text-white transition-all flex items-center gap-2 justify-center">
-              <Github size={18} /> Explore Profiles
+            <Link href="/hackathons" className="px-8 py-3.5 rounded-xl glass border border-white/10 text-white/80 font-semibold text-base hover:border-violet-500/40 hover:text-white transition-all flex items-center gap-2 justify-center">
+              Join Hackathons <ArrowRight size={18} />
             </Link>
           </div>
 
@@ -84,7 +73,7 @@ export default function LandingPage() {
           {SAMPLE_PROFILES.map((p) => (
             <div key={p.name} className="glass rounded-2xl p-6 hover:border-violet-500/30 transition-all duration-300 hover:-translate-y-1 group cursor-pointer">
               <div className="flex items-center gap-3 mb-4">
-                <div className={`w-11 h-11 rounded-xl bg-linear-to-br ${p.color} flex items-center justify-center text-sm font-bold text-white`}>
+                <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${p.color} flex items-center justify-center text-sm font-bold text-white`}>
                   {p.avatar}
                 </div>
                 <div>
@@ -133,7 +122,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {FEATURES.map((f) => (
               <div key={f.title} className="glass rounded-2xl p-6 hover:border-white/15 transition-all duration-300 hover:-translate-y-1 group">
-                <div className={`w-11 h-11 rounded-xl bg-linear-to-br ${f.color} flex items-center justify-center mb-4 group-hover:shadow-lg transition-all`}>
+                <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${f.color} flex items-center justify-center mb-4 group-hover:shadow-lg transition-all`}>
                   <f.icon size={20} className="text-white" />
                 </div>
                 <h3 className="font-semibold text-white text-base mb-2">{f.title}</h3>
@@ -182,7 +171,7 @@ export default function LandingPage() {
               <p className="text-white/60 mb-8 max-w-lg mx-auto">
                 Join thousands of developers who are already growing their careers with Innovaite.
               </p>
-              <Link href="/register" className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-linear-to-r from-violet-600 to-blue-600 text-white font-semibold hover:opacity-90 transition-all hover:shadow-2xl hover:shadow-violet-500/30">
+              <Link href="/register" className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 text-white font-semibold hover:opacity-90 transition-all hover:shadow-2xl hover:shadow-violet-500/30">
                 Get Started for Free <ArrowRight size={18} />
               </Link>
             </div>
