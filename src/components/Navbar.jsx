@@ -1,17 +1,20 @@
 "use client";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { Menu, X, Code2 } from "lucide-react";
+import { Menu, X, Code2, Building2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState(null);
+  const [company, setCompany] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
     const stored = localStorage.getItem("innovaite_user");
     if (stored) setUser(JSON.parse(stored));
+    const companyStored = localStorage.getItem("innovaite_company");
+    if (companyStored) setCompany(JSON.parse(companyStored));
   }, []);
 
   const handleLogout = () => {
@@ -23,6 +26,7 @@ export default function Navbar() {
   const NAV = [
     { href: "/hackathons", label: "Hackathons" },
     { href: "/explore", label: "Explore" },
+    { href: "/problems", label: "Problems" },
     ...(user ? [{ href: "/dashboard", label: "Dashboard" }] : []),
   ];
 
@@ -52,7 +56,20 @@ export default function Navbar() {
 
           {/* CTA */}
           <div className="hidden md:flex items-center gap-3">
-            {user ? (
+            {company ? (
+              <>
+                <Link href="/company-dashboard" className="flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 text-sm font-medium transition-colors">
+                  <Building2 size={14} />
+                  {company.name}
+                </Link>
+                <button
+                  onClick={() => { localStorage.removeItem("innovaite_company"); setCompany(null); router.push("/"); }}
+                  className="px-4 py-2 rounded-lg glass border border-white/10 text-white/60 hover:text-white text-sm font-medium transition-colors"
+                >
+                  Sign Out
+                </button>
+              </>
+            ) : user ? (
               <>
                 <Link href={`/profile/${user.username}`} className="text-white/60 hover:text-white text-sm font-medium transition-colors">
                   @{user.username}
@@ -63,6 +80,10 @@ export default function Navbar() {
               </>
             ) : (
               <>
+                <Link href="/company-login" className="flex items-center gap-1.5 text-emerald-400/80 hover:text-emerald-400 font-medium text-sm transition-colors">
+                  <Building2 size={14} />
+                  For Companies
+                </Link>
                 <Link href="/login" className="text-white/60 hover:text-white font-medium text-sm transition-colors">Log in</Link>
                 <Link href="/register" className="px-4 py-2 bg-gradient-to-r from-violet-600 to-blue-600 text-white font-medium rounded-lg text-sm hover:opacity-90 transition-all">
                   Sign up
@@ -86,6 +107,10 @@ export default function Navbar() {
                 {n.label}
               </Link>
             ))}
+            <hr className="border-white/5" />
+            <Link href="/company-login" className="text-emerald-400/70 font-medium py-1 text-sm" onClick={() => setOpen(false)}>
+              🏢 Company Portal
+            </Link>
             <hr className="border-white/5" />
             {user ? (
               <button onClick={() => { handleLogout(); setOpen(false); }} className="text-left text-red-400 font-medium py-1 text-sm">Sign Out</button>
